@@ -12,11 +12,9 @@
     "skipLibCheck": true,
     "sourceMap": true,
     "resolveJsonModule": true,
-    "baseUrl": "./",
+    "baseUrl": "./src",
     "paths": {
-      "@src/*": [
-        "src/*"
-      ]
+      "@src/*": ["*"]
     }
   },
   "include": [

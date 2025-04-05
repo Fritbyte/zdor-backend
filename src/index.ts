@@ -1,30 +1,30 @@
-import express, {Request, Response} from 'express';
+import app from '@src/server';
+import dotenv from 'dotenv';
+import { createTables } from '@src/config/database';
 
-const app = express();
-const port = process.env.PORT || 3000;
+dotenv.config();
 
-import mysql from 'mysql2/promise'
+const PORT = process.env.PORT || 3000;
 
-async function connectDB() {
-    try {
-        const connection = await mysql.createConnection({
-            host: process.env.MYSQL_HOST || 'mysql',
-            user: process.env.MYSQL_USER || 'root',
-            password: process.env.MYSQL_PASSWORD || 'password',
-            database: process.env.MYSQL_DATABASE || 'dev'
-        });
-        console.log('Connected to MySQL');
-        await connection.end();
-    } catch (error) {
-        console.error('MySQL connection error:', error);
-    }
-}
+const startServer = async () => {
+  try {
+    await createTables();
+    const server = app.listen(PORT);
 
-app.get('/', (req: Request, res: Response) => {
-    res.send('Hello from Express with TypeScript!');
-});
+    process.on('SIGTERM', () => {
+      server.close(() => {
+        process.exit(0);
+      });
+    });
 
-app.listen(port, async () => {
-    console.log(`Server is running on port ${port}`);
-    await connectDB();
-});
+    process.on('SIGINT', () => {
+      server.close(() => {
+        process.exit(0);
+      });
+    });
+  } catch (error) {
+    console.error('Ошибка при запуске сервера: ', error);
+  }
+};
+
+startServer().then(() => console.log(`🚀 Сервер запущен на порту ${PORT}`));
