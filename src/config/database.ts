@@ -26,6 +26,18 @@ export const createTables = async () => {
 
     await connection.execute(createUsersTableQuery);
     console.log('Таблица "users" успешно создана (или уже существует).');
+
+    const createProfilesTableQuery = `CREATE TABLE IF NOT EXISTS profiles (
+        id INT AUTO_INCREMENT PRIMARY KEY,
+        user_id INT NOT NULL,
+        username VARCHAR(255) NOT NULL,
+        created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+        updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+        FOREIGN KEY (user_id) REFERENCES users(id)
+      );`;
+
+    await connection.execute(createProfilesTableQuery);
+    console.log('Таблица "profiles" успешно создана (или уже существует).');
   } catch (err) {
     console.error('Ошибка при создании таблицы: ', err);
   } finally {
